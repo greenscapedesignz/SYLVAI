@@ -56,6 +56,50 @@ const PLANT_DB = [
     placement_logic: "Living Room Anchor", vaastu_zones: ["N", "E"], co2_index: 2.9,
     keywords: ["statement", "living room", "fatigue", "bright", "tropical"],
     image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: "p5", name: "ZZ Plant (Zamioculcas)", price: 750, height: "2 - 3 ft", health_status: "Excellent (Drought Hardy)",
+    ecology: { lux_min: 10, lux_opt_min: 100, lux_opt_max: 500, lux_max: 2000, temp_min: 15, temp_max: 35, humidity_min: 10, humidity_max: 70 },
+    design: { form: "Structural/Waxy", color: "Glossy Dark Green", texture: "Thick/Plastic", density: "Vertical", scent: "None", contrast: "Medium", size: "Medium" },
+    education: { color: "Deep gloss reflects minimal ambient light.", texture: "Thick cuticles prevent moisture loss.", shape: "Vertical arching stems create structured geometry.", size: "Fits narrow hallways and corners." },
+    health: { impact: "Executive Function", mechanism: "Resilience Modeling", voc: ["Toluene"], benefits: ["Visual stability", "Low-stress ownership"] },
+    care: { maintenance: "Very Low", base_water_days: 21, fertiliser: "Balanced 10-10-10", frequency: "12 weeks" },
+    placement_logic: "Office Cubicle / Hallway", vaastu_zones: ["S", "SW"], co2_index: 1.2,
+    keywords: ["dark", "office", "cubicle", "forgetful", "indestructible"],
+    image: "https://images.unsplash.com/photo-1632203171982-cc0df6e9ceb4?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: "p6", name: "Areca Palm (Chrysalidocarpus)", price: 1100, height: "4 - 6 ft", health_status: "Vibrant (High Transpiration)",
+    ecology: { lux_min: 800, lux_opt_min: 1500, lux_opt_max: 3000, lux_max: 8000, temp_min: 18, temp_max: 28, humidity_min: 50, humidity_max: 85 },
+    design: { form: "Fronded/Feathery", color: "Lush Yellow-Green", texture: "Fine/Soft", density: "Plumose", scent: "Fresh", contrast: "Low", size: "Large" },
+    education: { color: "Yellow-green hues brighten heavy interior spaces.", texture: "Fine fronds diffuse harsh acoustic noise.", shape: "Feathery arching creates a soft psychological barrier.", size: "Excellent for room division." },
+    health: { impact: "Humidification", mechanism: "High Transpiration Rate", voc: ["Xylene"], benefits: ["Natural humidifier", "Sound diffusion"] },
+    care: { maintenance: "High", base_water_days: 4, fertiliser: "Palm Food", frequency: "4 weeks" },
+    placement_logic: "Bright Corners", vaastu_zones: ["N", "NE"], co2_index: 4.1,
+    keywords: ["dry", "humidifier", "noise", "large", "bright", "living room"],
+    image: "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: "p7", name: "Fiddle Leaf Fig (Ficus Lyrata)", price: 1950, height: "5 - 7 ft", health_status: "Stable (Acclimated)",
+    ecology: { lux_min: 1000, lux_opt_min: 2000, lux_opt_max: 4000, lux_max: 10000, temp_min: 18, temp_max: 27, humidity_min: 40, humidity_max: 70 },
+    design: { form: "Tree-form Focal", color: "Deep Matte Green", texture: "Leathery/Large", density: "Columnar", scent: "Woody", contrast: "Bold", size: "Large" },
+    education: { color: "Matte green absorbs harsh direct light.", texture: "Violin-shaped leaves act as dramatic visual anchors.", shape: "Tree-form elevates biophilia to eye level.", size: "Commands attention and awe." },
+    health: { impact: "Creativity Boost", mechanism: "Visual Statement", voc: ["Formaldehyde"], benefits: ["Aesthetic pride", "Mental clarity"] },
+    care: { maintenance: "High", base_water_days: 7, fertiliser: "High Nitrogen", frequency: "4 weeks" },
+    placement_logic: "Near South-facing Windows", vaastu_zones: ["SE", "S"], co2_index: 3.5,
+    keywords: ["statement", "tree", "bright", "window", "creativity", "luxury"],
+    image: "https://images.unsplash.com/photo-1545239351-ef35f43d514b?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: "p8", name: "Spider Plant (Chlorophytum)", price: 450, height: "1 - 1.5 ft", health_status: "Excellent (Producing Pups)",
+    ecology: { lux_min: 200, lux_opt_min: 800, lux_opt_max: 1500, lux_max: 4000, temp_min: 13, temp_max: 27, humidity_min: 30, humidity_max: 80 },
+    design: { form: "Burst/Radiating", color: "Green/White Variegation", texture: "Grass-like", density: "Spiky", scent: "None", contrast: "High", size: "Small" },
+    education: { color: "High contrast striping draws immediate visual attention.", texture: "Grass-like fronds mimic outdoor meadow environments.", shape: "Radiating bursts symbolize kinetic energy.", size: "Perfect for confined surfaces." },
+    health: { impact: "Carbon Scrubbing", mechanism: "Rapid Growth", voc: ["Carbon Monoxide"], benefits: ["Safe for pets", "Air purification"] },
+    care: { maintenance: "Low", base_water_days: 6, fertiliser: "Standard NPK", frequency: "4 weeks" },
+    placement_logic: "Kitchen Shelves", vaastu_zones: ["E", "NE"], co2_index: 2.1,
+    keywords: ["kitchen", "pets", "safe", "shelf", "air purifier", "small"],
+    image: "https://images.unsplash.com/photo-1567331711402-509c13ee0f91?auto=format&fit=crop&w=800&q=80"
   }
 ];
 
@@ -79,9 +123,9 @@ const Engines = {
     if (userState.intent === 'relax' && (plant.health.impact.includes('Relief') || plant.health.impact.includes('Grounding'))) score += 25;
     
     if (userState.mood === 'stressed' && plant.health.benefits.some(b => b.toLowerCase().includes('stress'))) score += 15;
-    if (userState.mood === 'fatigued' && plant.design.texture.includes('Perforated')) score += 15; // Fractals reduce fatigue
+    if (userState.mood === 'fatigued' && plant.design.texture.includes('Perforated')) score += 15; 
 
-    if (env.audioLevel > 65 && plant.design.size === 'Large') score += 10; // Large leaves diffuse sound
+    if (env.audioLevel > 65 && plant.design.size === 'Large') score += 10; 
     
     return Math.min(99, Math.round(score));
   },
@@ -335,6 +379,16 @@ export default function SYLVAIApp() {
     syncToGoogleSheets('Track_Event', { user_id: userId, event_type: 'Simulated_Intervention' });
   };
 
+  const addToCart = (item) => {
+    if (item.isLayoutBundle) {
+      const bundleItems = Object.values(item.layout).filter(Boolean);
+      setCart([...cart, ...bundleItems]);
+    } else {
+      setCart([...cart, item]);
+    }
+    if (view === 'plant_detail') switchView('shop');
+  };
+
   const checkout = () => {
     const newOwned = cart.filter(item => !item.items).map(item => ({ ...item, daysLeft: 5, fertDaysLeft: 14 }));
     setMyPlants([...myPlants, ...newOwned]);
@@ -361,7 +415,7 @@ export default function SYLVAIApp() {
         </ul>
       </div>
 
-      <button onClick={() => setOnboardingCompleted(true)} className="w-full bg-white text-black p-4 rounded-2xl text-sm font-bold uppercase tracking-widest flex justify-between items-center transition-transform active:scale-95 shadow-xl">
+      <button onClick={() => { setOnboardingCompleted(true); requestLocation(); }} className="w-full bg-white text-black p-4 rounded-2xl text-sm font-bold uppercase tracking-widest flex justify-between items-center transition-transform active:scale-95 shadow-xl">
         Enter System <ArrowRight className="w-5 h-5"/>
       </button>
     </div>
@@ -489,19 +543,23 @@ export default function SYLVAIApp() {
     <div className="space-y-8 animate-in slide-in-from-right duration-500 pb-24">
       <div className="mb-6"><h2 className="text-2xl font-bold text-white tracking-tight mb-2">How are you feeling?</h2><p className="text-xs text-gray-400 font-medium">SYLVAI identifies biological solutions based on your baseline state.</p></div>
       <div className="grid grid-cols-2 gap-3">
-        {[{ id: 'stressed', icon: Frown, label: 'Stressed' }, { id: 'fatigued', icon: Moon, label: 'Fatigued' }, { id: 'neutral', icon: Smile, label: 'Balanced' }].map(m => (
+        {[{ id: 'stressed', icon: Frown, label: 'Stressed' }, { id: 'fatigued', icon: Moon, label: 'Fatigued' }, { id: 'neutral', icon: Smile, label: 'Balanced' }].map(m => {
+          const Icon = m.icon;
+          return (
           <button key={m.id} onClick={() => setUserState({...userState, mood: m.id})} className={`p-4 rounded-2xl border flex flex-col items-center gap-3 ${userState.mood === m.id ? 'bg-[#2e7d32]/20 border-[#4ade80] text-[#4ade80]' : 'bg-[#16241c]/60 border-white/5 text-gray-400'}`}>
-            <m.icon className="w-6 h-6"/><span className="text-xs font-bold">{m.label}</span>
+            <Icon className="w-6 h-6"/><span className="text-xs font-bold">{m.label}</span>
           </button>
-        ))}
+        )})}
       </div>
       <div className="space-y-3">
-        {[{ id: 'focus', icon: Coffee, label: 'Deep Work & Focus' }, { id: 'sleep', icon: Moon, label: 'Sleep Optimization' }, { id: 'relax', icon: Brain, label: 'Stress Recovery' }].map(intent => (
+        {[{ id: 'focus', icon: Coffee, label: 'Deep Work & Focus' }, { id: 'sleep', icon: Moon, label: 'Sleep Optimization' }, { id: 'relax', icon: Brain, label: 'Stress Recovery' }].map(intent => {
+          const Icon = intent.icon;
+          return (
           <button key={intent.id} onClick={() => setUserState({...userState, intent: intent.id})} className={`w-full p-4 rounded-2xl border flex items-center gap-4 ${userState.intent === intent.id ? 'bg-[#2e7d32]/20 border-[#4ade80]' : 'bg-[#16241c]/60 border-white/5'}`}>
-            <div className={`p-3 rounded-xl ${userState.intent === intent.id ? 'bg-[#4ade80] text-black' : 'bg-white/5'}`}><intent.icon className="w-5 h-5"/></div>
+            <div className={`p-3 rounded-xl ${userState.intent === intent.id ? 'bg-[#4ade80] text-black' : 'bg-white/5'}`}><Icon className="w-5 h-5"/></div>
             <div className={`text-sm font-bold ${userState.intent === intent.id ? 'text-[#4ade80]' : 'text-white'}`}>{intent.label}</div>
           </button>
-        ))}
+        )})}
       </div>
       <button onClick={() => switchView('scan')} className="w-full bg-[#2e7d32] text-white p-4 rounded-2xl text-sm font-bold uppercase tracking-widest flex justify-between items-center mt-8">Proceed to Scan <ArrowRight className="w-5 h-5"/></button>
     </div>
@@ -594,12 +652,11 @@ export default function SYLVAIApp() {
   };
 
   const renderShop = () => {
-    // AI Search Filtering
     const keywords = aiQuery.toLowerCase().split(' ').filter(w => w.length > 2);
     let filteredDB = PLANT_DB;
     if (keywords.length > 0) {
       filteredDB = PLANT_DB.filter(p => keywords.some(kw => p.name.toLowerCase().includes(kw) || p.keywords.some(k => k.includes(kw)) || p.health.impact.toLowerCase().includes(kw)));
-      if (filteredDB.length === 0) filteredDB = PLANT_DB; // Fallback
+      if (filteredDB.length === 0) filteredDB = PLANT_DB;
     }
 
     let recs = filteredDB.map(p => ({ ...p, score: Engines.scorePlant(env, p, userState) })).filter(p => p.score > 20).sort((a,b) => b.score - a.score);
@@ -609,7 +666,6 @@ export default function SYLVAIApp() {
     return (
       <div className="space-y-8 pb-24 animate-in slide-in-from-right duration-500">
         
-        {/* AI Search Bar */}
         <div className="relative">
           <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <input type="text" placeholder="AI: Describe your mood or space..." value={aiQuery} onChange={e => setAiQuery(e.target.value)} className="w-full bg-[#16241c] border border-white/10 rounded-2xl p-4 pl-12 text-white text-sm outline-none focus:border-[#4ade80] transition-colors shadow-lg placeholder:text-gray-600" />
