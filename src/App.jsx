@@ -294,7 +294,7 @@ export default function SYLVAIApp() {
   const syncToGoogleSheets = async (type, data) => {
     setIsSyncing(true);
     try {
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwNlKqVQHhv5D4m4ccgHYZvAC6EaK8UxEtopiWqBCb8P_noR0yCmwInTs36dOpMkJpN/exec"; 
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxXB3FkZ8_fPHB77mOvBsJNkh6aUfEe-kSN790OzJDhz7yF4dr1S0B0w6aHyHTJNXCD/exec"; 
       await fetch(SCRIPT_URL, {
         method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
