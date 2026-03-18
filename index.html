@@ -9,7 +9,7 @@ body {
   margin:0;
   font-family: Helvetica, Arial;
   background:#0f1a14;
-  color:white;
+  color:#e6efe9;
 }
 .container {
   max-width:420px;
@@ -32,7 +32,7 @@ button {
   color:white;
   font-weight:bold;
 }
-input, select {
+input {
   width:100%;
   padding:12px;
   margin-top:10px;
@@ -42,15 +42,6 @@ input, select {
 img {
   width:100%;
   border-radius:12px;
-  margin-top:10px;
-}
-.small {
-  font-size:12px;
-  color:#aaa;
-}
-.tag {
-  font-size:10px;
-  color:#4ade80;
 }
 </style>
 </head>
@@ -63,98 +54,54 @@ img {
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPVe2V0cknwxBl5__jawo_tkn_5fOys6l3R2ivUcZsJRTPKOX94ee7efLilJJRmgwp/exec";
-
-// ---------------- USER ----------------
-let userId = localStorage.getItem("user_id") || ("U"+Math.random().toString(36).substr(2,9));
-localStorage.setItem("user_id", userId);
-
-let profile = {};
-let cart = [];
-let plantsOwned = [];
-let step = "profile";
-
-// ---------------- ENV ----------------
-let env = {
-  lux:300,
-  humidity:40,
-  occupancy:2,
-  ventilation:"Medium"
-};
-
-// ---------------- PLANT DB ----------------
+// ================== DATABASE ==================
 const PLANTS = [
 {
 name:"Snake Plant",
 price:650,
 lux_min:50,
 lux_max:1500,
-co2:2.5,
-care:14,
-benefit:"Sleep + Oxygen",
-image:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Sansevieria_trifasciata.jpg/800px-Sansevieria_trifasciata.jpg"
+benefit:"Sleep Optimization",
+water:14,
+image:"https://images.unsplash.com/photo-1599598425947-330026292ad0"
 },
 {
 name:"Pothos",
 price:350,
 lux_min:100,
 lux_max:1200,
-co2:1.8,
-care:7,
-benefit:"Focus + VOC removal",
-image:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Epipremnum_aureum.jpg/800px-Epipremnum_aureum.jpg"
-},
-{
-name:"Peace Lily",
-price:850,
-lux_min:100,
-lux_max:800,
-co2:3.2,
-care:5,
-benefit:"Respiratory + humidity",
-image:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Spathiphyllum_cochlearispathum_RTBG.jpg/800px-Spathiphyllum_cochlearispathum_RTBG.jpg"
+benefit:"Focus Boost",
+water:7,
+image:"https://images.unsplash.com/photo-1614594851134-8b0f8b3e1c1c"
 }
 ];
 
-// ---------------- SYNC ----------------
-async function sync(type,data){
-  try{
-    await fetch(SCRIPT_URL,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        type:type,
-        data:{user_id:userId,...data}
-      })
-    });
-    console.log("SYNC:",type,data);
-  }catch(e){
-    console.log("Sync failed",e);
-  }
+// ================== STATE ==================
+let step="profile";
+let profile={};
+let cart=[];
+let env={lux:300};
+
+// ================== APPSCRIPT ==================
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyPVe2V0cknwxBl5__jawo_tkn_5fOys6l3R2ivUcZsJRTPKOX94ee7efLilJJRmgwp/exec";
+
+function sync(type,data){
+fetch(SCRIPT_URL,{
+method:"POST",
+headers:{"Content-Type":"text/plain"},
+body:JSON.stringify({type,data})
+});
 }
 
-// ---------------- ENGINE ----------------
-function scorePlant(p){
-  let score=0;
-
-  if(env.lux>=p.lux_min && env.lux<=p.lux_max) score+=50;
-
-  let co2=(env.occupancy*2)-(env.ventilation==="High"?2:1);
-  if(p.co2>2 && co2>2) score+=30;
-
-  return score;
+// ================== ENGINE ==================
+function score(p){
+return (env.lux>=p.lux_min && env.lux<=p.lux_max)?80:40;
 }
 
-function wateringDays(p){
-  let factor=env.lux>800?0.8:1.2;
-  return Math.round(p.care*factor);
-}
-
-// ---------------- RENDER ----------------
+// ================== UI ==================
 function render(){
 let app=document.getElementById("app");
 
-// PROFILE
 if(step==="profile"){
 app.innerHTML=`
 <div class="card">
@@ -166,97 +113,37 @@ app.innerHTML=`
 </div>`;
 }
 
-// SCAN
 if(step==="scan"){
 app.innerHTML=`
 <div class="card">
-<h3>Environment Scan</h3>
-
-Lux ${env.lux}
+<h3>Light: ${env.lux}</h3>
 <input type="range" min="50" max="1500" value="${env.lux}" onchange="env.lux=this.value">
-
-Humidity ${env.humidity}
-<input type="range" min="20" max="80" value="${env.humidity}" onchange="env.humidity=this.value">
-
-Occupancy
-<input type="number" value="${env.occupancy}" onchange="env.occupancy=this.value">
-
-<select onchange="env.ventilation=this.value">
-<option>Low</option>
-<option selected>Medium</option>
-<option>High</option>
-</select>
-
-<button onclick="runScan()">Analyze</button>
+<button onclick="analyze()">Analyze</button>
 </div>`;
 }
 
-// SHOP
 if(step==="shop"){
-let rec=PLANTS.map(p=>({...p,score:scorePlant(p)})).sort((a,b)=>b.score-a.score);
-
 app.innerHTML=`
 <div class="card">
 <h3>Recommended</h3>
-
-${rec.map(p=>`
+${PLANTS.map(p=>`
 <div>
 <img src="${p.image}">
-<b>${p.name}</b>
-<div class="tag">${p.benefit}</div>
-<div class="small">Score: ${p.score}%</div>
-<div class="small">Water: every ${wateringDays(p)} days</div>
-₹${p.price}
-<button onclick="addToCart('${p.name}')">Add</button>
-</div>
-`).join("")}
-
+<b>${p.name}</b><br>
+${p.benefit}<br>
+Score: ${score(p)}<br>
+<button onclick="add('${p.name}')">Add</button>
+</div>`).join("")}
 </div>
 
 <div class="card">
 Cart: ${cart.length}
-<button onclick="goCheckout()">Checkout</button>
+<button onclick="checkout()">Checkout</button>
 </div>`;
 }
-
-// CHECKOUT
-if(step==="checkout"){
-let total=cart.reduce((s,p)=>s+p.price,0);
-
-app.innerHTML=`
-<div class="card">
-<h3>Checkout</h3>
-
-${cart.map(c=>`<div>${c.name} - ₹${c.price}</div>`).join("")}
-
-<hr>
-<b>Total: ₹${total}</b>
-
-<button onclick="checkout()">Confirm</button>
-</div>`;
 }
 
-// DASHBOARD
-if(step==="dashboard"){
-app.innerHTML=`
-<div class="card">
-<h3>Your Plants</h3>
-
-${plantsOwned.length===0?"No plants yet":plantsOwned.map(p=>`
-<div>
-<img src="${p.image}">
-<b>${p.name}</b>
-<div class="small">Water in ${p.nextWater} days</div>
-</div>
-`).join("")}
-</div>
-
-<button onclick="step='scan';render()">Add More</button>
-`;
-}
-}
-
-// ---------------- ACTIONS ----------------
+// ================== ACTIONS ==================
 function saveProfile(){
 profile={
 name:document.getElementById("name").value,
@@ -264,54 +151,31 @@ phone:document.getElementById("phone").value,
 email:document.getElementById("email").value
 };
 
-sync("User_Init",{profile});
+sync("User",{profile});
 step="scan";
 render();
 }
 
-function runScan(){
+function analyze(){
 sync("Scan",{env});
 step="shop";
 render();
 }
 
-function addToCart(name){
+function add(name){
 let p=PLANTS.find(x=>x.name===name);
 cart.push(p);
-
-sync("Add",{plant:name});
-render();
-}
-
-function goCheckout(){
-step="checkout";
 render();
 }
 
 function checkout(){
-plantsOwned=cart.map(p=>({
-...p,
-nextWater:wateringDays(p)
-}));
-
-sync("Order",{
-user:profile,
-items:cart.map(c=>c.name)
-});
-
+sync("Order",{profile,cart});
 alert("Order placed");
-
 cart=[];
-step="dashboard";
+step="profile";
 render();
-
-// REMINDER (basic)
-setTimeout(()=>{
-alert("Reminder: Water your plants today 🌿");
-},5000);
 }
 
-// INIT
 render();
 </script>
 
