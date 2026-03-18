@@ -1,5 +1,3 @@
-# SYLVAI
-Bring Ecology Indoors, Living Intelligence for Your Space
 🌿 SYLVAI
 
 Bring Ecology Indoors. A smart biophilic design engine that bridges the gap between human psychology, indoor microclimates, and botanical science.
