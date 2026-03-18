@@ -100,6 +100,50 @@ const PLANT_DB = [
     placement_logic: "Kitchen Shelves", vaastu_zones: ["E", "NE"], co2_index: 2.1,
     keywords: ["kitchen", "pets", "safe", "shelf", "air purifier", "small"],
     image: "https://images.unsplash.com/photo-1567331711402-509c13ee0f91?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: "p9", name: "Rubber Plant (Ficus Elastica)", price: 850, height: "3 - 5 ft", health_status: "Vibrant (Active Growth)",
+    ecology: { lux_min: 400, lux_opt_min: 800, lux_opt_max: 2000, lux_max: 5000, temp_min: 15, temp_max: 35, humidity_min: 30, humidity_max: 80 },
+    design: { form: "Tree-form Focal", color: "Burgundy/Dark Green", texture: "Glossy/Thick", density: "Medium", scent: "None", contrast: "High", size: "Large" },
+    education: { color: "Deep burgundy hues provide a luxurious grounding effect.", texture: "High gloss leaves catch and scatter ambient light.", shape: "Broad leaves soften rigid architectural corners.", size: "Acts as a primary visual anchor." },
+    health: { impact: "Air Detoxification", mechanism: "Phytoremediation", voc: ["Formaldehyde", "Airborne toxins"], benefits: ["Hypoallergenic", "Air purification"] },
+    care: { maintenance: "Medium", base_water_days: 10, fertiliser: "Balanced Liquid", frequency: "6 weeks" },
+    placement_logic: "Living Room Window / Corporate Lobbies", vaastu_zones: ["SE", "S"], co2_index: 3.0,
+    keywords: ["bold", "dark", "statement", "living room", "air purifier", "tree", "commercial"],
+    image: "https://images.unsplash.com/photo-1611145367651-e7ce0634e062?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: "p10", name: "Aloe Vera", price: 250, height: "1 - 2 ft", health_status: "Excellent (Mature)",
+    ecology: { lux_min: 1000, lux_opt_min: 2000, lux_opt_max: 5000, lux_max: 10000, temp_min: 18, temp_max: 40, humidity_min: 10, humidity_max: 60 },
+    design: { form: "Rosette/Spiky", color: "Silvery Green", texture: "Fleshy/Succulent", density: "Sparse", scent: "None", contrast: "High", size: "Small" },
+    education: { color: "Silvery green offers a cooling visual temperature.", texture: "Fleshy leaves communicate resilience and water retention.", shape: "Spiky rosettes create dynamic focal points.", size: "Ideal for windowsills and desks." },
+    health: { impact: "Skin & Sleep Support", mechanism: "CAM Photosynthesis", voc: ["Benzene", "Formaldehyde"], benefits: ["Nighttime oxygen", "Medicinal gel"] },
+    care: { maintenance: "Very Low", base_water_days: 21, fertiliser: "Cactus Mix", frequency: "12 weeks" },
+    placement_logic: "Sunny Windowsill", vaastu_zones: ["E", "N"], co2_index: 1.5,
+    keywords: ["medicinal", "succulent", "sun", "window", "sleep", "bedroom", "home"],
+    image: "https://images.unsplash.com/photo-1555037015-1498966bcd7c?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: "p11", name: "Aglaonema (Chinese Evergreen)", price: 550, height: "1.5 - 2 ft", health_status: "Lush (New Shoots)",
+    ecology: { lux_min: 100, lux_opt_min: 300, lux_opt_max: 800, lux_max: 2000, temp_min: 18, temp_max: 30, humidity_min: 40, humidity_max: 80 },
+    design: { form: "Bushy/Clumping", color: "Variegated Green/Pink", texture: "Smooth", density: "Dense", scent: "None", contrast: "Medium", size: "Medium" },
+    education: { color: "Pink/Red variations boost mood and energy levels.", texture: "Smooth broad leaves collect minimal dust.", shape: "Bushy density creates a feeling of abundance.", size: "Perfect for office desks." },
+    health: { impact: "Cognitive Focus", mechanism: "High Transpiration", voc: ["Benzene", "Formaldehyde"], benefits: ["Humidity control", "Productivity"] },
+    care: { maintenance: "Low", base_water_days: 8, fertiliser: "Standard NPK", frequency: "6 weeks" },
+    placement_logic: "Office Desk / Tabletop", vaastu_zones: ["N", "E"], co2_index: 2.2,
+    keywords: ["color", "pink", "office", "desk", "low light", "focus", "commercial"],
+    image: "https://images.unsplash.com/photo-1620127807580-10111f1857bd?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    id: "p12", name: "Boston Fern (Nephrolepis)", price: 400, height: "2 - 3 ft", health_status: "Excellent (High Moisture)",
+    ecology: { lux_min: 200, lux_opt_min: 400, lux_opt_max: 1000, lux_max: 2500, temp_min: 15, temp_max: 30, humidity_min: 60, humidity_max: 90 },
+    design: { form: "Arching/Cascading", color: "Bright Yellow-Green", texture: "Feathery", density: "Dense", scent: "Earthy", contrast: "Low", size: "Medium/Hanging" },
+    education: { color: "Vibrant yellow-green signals vitality.", texture: "Highly divided fronds maximize sound wave diffusion (acoustic control).", shape: "Cascading form softens hard edges.", size: "Excellent for hanging baskets." },
+    health: { impact: "Humidification & Acoustic", mechanism: "Hyper-Transpiration", voc: ["Formaldehyde", "Xylene"], benefits: ["Natural humidifier", "Noise reduction"] },
+    care: { maintenance: "High", base_water_days: 3, fertiliser: "Liquid Houseplant", frequency: "4 weeks" },
+    placement_logic: "Bathroom / Hanging Basket", vaastu_zones: ["N", "E"], co2_index: 3.5,
+    keywords: ["fern", "hanging", "bathroom", "humidifier", "noise", "lush", "home"],
+    image: "https://images.unsplash.com/photo-1629555132189-cd79ceeb3c18?auto=format&fit=crop&w=800&q=80"
   }
 ];
 
