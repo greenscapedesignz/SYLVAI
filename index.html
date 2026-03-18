@@ -10,82 +10,69 @@ body {
   font-family: Helvetica, Arial;
   background:#0f1a14;
   color:white;
-  padding:20px;
+}
+.container {
+  max-width:420px;
+  margin:auto;
+  padding:16px;
 }
 .card {
   background:#16241c;
-  padding:15px;
-  border-radius:12px;
-  margin-top:15px;
-}
-input, button, select {
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:8px;
-  border:none;
+  padding:16px;
+  border-radius:16px;
+  margin-top:16px;
 }
 button {
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  border:none;
+  border-radius:12px;
   background:#2e7d32;
   color:white;
   font-weight:bold;
 }
+input, select {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:10px;
+  border:none;
+}
 img {
   width:100%;
-  border-radius:10px;
+  border-radius:12px;
+  margin-top:10px;
+}
+.small {
+  font-size:12px;
+  color:#aaa;
+}
+.tag {
+  font-size:10px;
+  color:#4ade80;
 }
 </style>
 </head>
 
 <body>
 
+<div class="container">
 <h2>SYLVAI 🌿</h2>
 <div id="app"></div>
+</div>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPVe2V0cknwxBl5__jawo_tkn_5fOys6l3R2ivUcZsJRTPKOX94ee7efLilJJRmgwp/exec";
 
 // ---------------- USER ----------------
-let userId = localStorage.getItem("user_id");
-if (!userId) {
-  userId = "U" + Math.random().toString(36).substr(2,9);
-  localStorage.setItem("user_id", userId);
-}
+let userId = localStorage.getItem("user_id") || ("U"+Math.random().toString(36).substr(2,9));
+localStorage.setItem("user_id", userId);
 
 let profile = {};
 let cart = [];
+let plantsOwned = [];
 let step = "profile";
-
-// ---------------- PLANTS ----------------
-const PLANTS = [
-  {
-    name:"Snake Plant",
-    price:650,
-    lux_min:50,
-    lux_max:1500,
-    benefit:"Sleep + Oxygen",
-    co2:2.5,
-    image:"https://images.unsplash.com/photo-1599598425947-330026292ad0"
-  },
-  {
-    name:"Pothos",
-    price:350,
-    lux_min:100,
-    lux_max:1200,
-    benefit:"Focus + VOC removal",
-    co2:1.8,
-    image:"https://images.unsplash.com/photo-1614594851134-8b0f8b3e1c1c"
-  },
-  {
-    name:"Peace Lily",
-    price:850,
-    lux_min:100,
-    lux_max:800,
-    benefit:"Respiratory + humidity",
-    co2:3.2,
-    image:"https://images.unsplash.com/photo-1593696954577-ab3d39317b97"
-  }
-];
 
 // ---------------- ENV ----------------
 let env = {
@@ -95,143 +82,236 @@ let env = {
   ventilation:"Medium"
 };
 
+// ---------------- PLANT DB ----------------
+const PLANTS = [
+{
+name:"Snake Plant",
+price:650,
+lux_min:50,
+lux_max:1500,
+co2:2.5,
+care:14,
+benefit:"Sleep + Oxygen",
+image:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Sansevieria_trifasciata.jpg/800px-Sansevieria_trifasciata.jpg"
+},
+{
+name:"Pothos",
+price:350,
+lux_min:100,
+lux_max:1200,
+co2:1.8,
+care:7,
+benefit:"Focus + VOC removal",
+image:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Epipremnum_aureum.jpg/800px-Epipremnum_aureum.jpg"
+},
+{
+name:"Peace Lily",
+price:850,
+lux_min:100,
+lux_max:800,
+co2:3.2,
+care:5,
+benefit:"Respiratory + humidity",
+image:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Spathiphyllum_cochlearispathum_RTBG.jpg/800px-Spathiphyllum_cochlearispathum_RTBG.jpg"
+}
+];
+
 // ---------------- SYNC ----------------
-function sync(type,data){
-  fetch(SCRIPT_URL,{
-    method:"POST",
-    mode:"no-cors",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      type,
-      data:{user_id:userId,...data}
-    })
-  });
+async function sync(type,data){
+  try{
+    await fetch(SCRIPT_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        type:type,
+        data:{user_id:userId,...data}
+      })
+    });
+    console.log("SYNC:",type,data);
+  }catch(e){
+    console.log("Sync failed",e);
+  }
 }
 
 // ---------------- ENGINE ----------------
 function scorePlant(p){
-  let score = 0;
+  let score=0;
 
-  if(env.lux >= p.lux_min && env.lux <= p.lux_max) score += 50;
+  if(env.lux>=p.lux_min && env.lux<=p.lux_max) score+=50;
 
-  let co2 = (env.occupancy*2) - (env.ventilation==="High"?2:1);
-  if(p.co2 > 2 && co2 > 2) score += 30;
+  let co2=(env.occupancy*2)-(env.ventilation==="High"?2:1);
+  if(p.co2>2 && co2>2) score+=30;
 
   return score;
 }
 
+function wateringDays(p){
+  let factor=env.lux>800?0.8:1.2;
+  return Math.round(p.care*factor);
+}
+
 // ---------------- RENDER ----------------
 function render(){
-  const app = document.getElementById("app");
+let app=document.getElementById("app");
 
-  if(step==="profile"){
-    app.innerHTML = `
-      <div class="card">
-        <h3>Your Details</h3>
-        <input id="name" placeholder="Name">
-        <input id="phone" placeholder="Phone">
-        <input id="email" placeholder="Email">
-        <button onclick="saveProfile()">Continue</button>
-      </div>
-    `;
-  }
+// PROFILE
+if(step==="profile"){
+app.innerHTML=`
+<div class="card">
+<h3>Enter Details</h3>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="email" placeholder="Email">
+<button onclick="saveProfile()">Continue</button>
+</div>`;
+}
 
-  if(step==="scan"){
-    app.innerHTML = `
-      <div class="card">
-        <h3>Environment</h3>
+// SCAN
+if(step==="scan"){
+app.innerHTML=`
+<div class="card">
+<h3>Environment Scan</h3>
 
-        Lux: ${env.lux}
-        <input type="range" min="50" max="1500" value="${env.lux}" onchange="env.lux=this.value">
+Lux ${env.lux}
+<input type="range" min="50" max="1500" value="${env.lux}" onchange="env.lux=this.value">
 
-        Humidity: ${env.humidity}
-        <input type="range" min="20" max="80" value="${env.humidity}" onchange="env.humidity=this.value">
+Humidity ${env.humidity}
+<input type="range" min="20" max="80" value="${env.humidity}" onchange="env.humidity=this.value">
 
-        Occupancy
-        <input type="number" value="${env.occupancy}" onchange="env.occupancy=this.value">
+Occupancy
+<input type="number" value="${env.occupancy}" onchange="env.occupancy=this.value">
 
-        Ventilation
-        <select onchange="env.ventilation=this.value">
-          <option>Low</option>
-          <option selected>Medium</option>
-          <option>High</option>
-        </select>
+<select onchange="env.ventilation=this.value">
+<option>Low</option>
+<option selected>Medium</option>
+<option>High</option>
+</select>
 
-        <button onclick="runScan()">Analyze</button>
-      </div>
-    `;
-  }
+<button onclick="runScan()">Analyze</button>
+</div>`;
+}
 
-  if(step==="shop"){
-    let rec = PLANTS.map(p => ({...p, score:scorePlant(p)}))
-                    .sort((a,b)=>b.score-a.score);
+// SHOP
+if(step==="shop"){
+let rec=PLANTS.map(p=>({...p,score:scorePlant(p)})).sort((a,b)=>b.score-a.score);
 
-    app.innerHTML = `
-      <div class="card">
-        <h3>Recommended Plants</h3>
-        ${rec.map(p=>`
-          <div style="margin-top:20px">
-            <img src="${p.image}">
-            <b>${p.name}</b><br>
-            ${p.benefit}<br>
-            Score: ${p.score}%<br>
-            ₹${p.price}
-            <button onclick="addToCart('${p.name}')">Add</button>
-          </div>
-        `).join("")}
-      </div>
+app.innerHTML=`
+<div class="card">
+<h3>Recommended</h3>
 
-      <div class="card">
-        Cart: ${cart.length}
-        <button onclick="checkout()">Checkout</button>
-      </div>
-    `;
-  }
+${rec.map(p=>`
+<div>
+<img src="${p.image}">
+<b>${p.name}</b>
+<div class="tag">${p.benefit}</div>
+<div class="small">Score: ${p.score}%</div>
+<div class="small">Water: every ${wateringDays(p)} days</div>
+₹${p.price}
+<button onclick="addToCart('${p.name}')">Add</button>
+</div>
+`).join("")}
+
+</div>
+
+<div class="card">
+Cart: ${cart.length}
+<button onclick="goCheckout()">Checkout</button>
+</div>`;
+}
+
+// CHECKOUT
+if(step==="checkout"){
+let total=cart.reduce((s,p)=>s+p.price,0);
+
+app.innerHTML=`
+<div class="card">
+<h3>Checkout</h3>
+
+${cart.map(c=>`<div>${c.name} - ₹${c.price}</div>`).join("")}
+
+<hr>
+<b>Total: ₹${total}</b>
+
+<button onclick="checkout()">Confirm</button>
+</div>`;
+}
+
+// DASHBOARD
+if(step==="dashboard"){
+app.innerHTML=`
+<div class="card">
+<h3>Your Plants</h3>
+
+${plantsOwned.length===0?"No plants yet":plantsOwned.map(p=>`
+<div>
+<img src="${p.image}">
+<b>${p.name}</b>
+<div class="small">Water in ${p.nextWater} days</div>
+</div>
+`).join("")}
+</div>
+
+<button onclick="step='scan';render()">Add More</button>
+`;
+}
 }
 
 // ---------------- ACTIONS ----------------
 function saveProfile(){
-  profile = {
-    name:document.getElementById("name").value,
-    phone:document.getElementById("phone").value,
-    email:document.getElementById("email").value
-  };
+profile={
+name:document.getElementById("name").value,
+phone:document.getElementById("phone").value,
+email:document.getElementById("email").value
+};
 
-  sync("User_Init",{profile});
-
-  step="scan";
-  render();
+sync("User_Init",{profile});
+step="scan";
+render();
 }
 
 function runScan(){
-  sync("Scan_Data",env);
-  step="shop";
-  render();
+sync("Scan",{env});
+step="shop";
+render();
 }
 
 function addToCart(name){
-  const plant = PLANTS.find(p=>p.name===name);
-  cart.push(plant);
+let p=PLANTS.find(x=>x.name===name);
+cart.push(p);
 
-  sync("Add_To_Cart",{plant:name});
+sync("Add",{plant:name});
+render();
+}
 
-  render();
+function goCheckout(){
+step="checkout";
+render();
 }
 
 function checkout(){
-  sync("Order",{
-    user:profile,
-    items:cart.map(c=>c.name),
-    total:cart.reduce((s,p)=>s+p.price,0)
-  });
+plantsOwned=cart.map(p=>({
+...p,
+nextWater:wateringDays(p)
+}));
 
-  alert("Order placed");
+sync("Order",{
+user:profile,
+items:cart.map(c=>c.name)
+});
 
-  cart=[];
-  step="profile";
-  render();
+alert("Order placed");
+
+cart=[];
+step="dashboard";
+render();
+
+// REMINDER (basic)
+setTimeout(()=>{
+alert("Reminder: Water your plants today 🌿");
+},5000);
 }
 
+// INIT
 render();
 </script>
 
