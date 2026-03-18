@@ -1,45 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SYLVAI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SYLVAI</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Helvetica, Arial;
-      background: #0f1a14;
-      color: white;
-      padding: 20px;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: none;
-    }
-
-    button {
-      background: #2e7d32;
-      color: white;
-      font-weight: bold;
-    }
-
-    .card {
-      background: #16241c;
-      padding: 15px;
-      border-radius: 12px;
-      margin-top: 15px;
-    }
-  </style>
+<style>
+body {
+  margin:0;
+  font-family: Helvetica, Arial;
+  background:#0f1a14;
+  color:white;
+  padding:20px;
+}
+input, button {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+}
+button {
+  background:#2e7d32;
+  color:white;
+  font-weight:bold;
+}
+.card {
+  background:#16241c;
+  padding:15px;
+  border-radius:12px;
+  margin-top:15px;
+}
+</style>
 </head>
 
 <body>
 
 <h2>SYLVAI 🌿</h2>
-
 <div id="app"></div>
 
 <script>
@@ -47,7 +43,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyPVe2V0cknwxBl5__ja
 
 let userId = localStorage.getItem("user_id");
 if (!userId) {
-  userId = "U" + Math.random().toString(36).substr(2, 9);
+  userId = "U" + Math.random().toString(36).substr(2,9);
   localStorage.setItem("user_id", userId);
 }
 
@@ -56,108 +52,103 @@ let cart = [];
 let step = "profile";
 let lux = 300;
 
-function sync(type, data) {
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      type: type,
-      data: { user_id: userId, ...data }
+function sync(type,data){
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      type,
+      data:{user_id:userId,...data}
     })
   });
 }
 
-function render() {
-  const app = document.getElementById("app");
+function render(){
+  const app=document.getElementById("app");
 
-  if (step === "profile") {
-    app.innerHTML = `
-      <div class="card">
-        <h3>Enter Details</h3>
-        <input id="name" placeholder="Name" />
-        <input id="phone" placeholder="Phone" />
-        <input id="email" placeholder="Email" />
-        <button onclick="saveProfile()">Continue</button>
-      </div>
-    `;
+  if(step==="profile"){
+    app.innerHTML=`
+    <div class="card">
+      <h3>Enter Details</h3>
+      <input id="name" placeholder="Name">
+      <input id="phone" placeholder="Phone">
+      <input id="email" placeholder="Email">
+      <button onclick="saveProfile()">Continue</button>
+    </div>`;
   }
 
-  if (step === "scan") {
-    app.innerHTML = `
-      <div class="card">
-        <h3>Scan Environment</h3>
-        <input type="range" min="100" max="1000" value="${lux}" onchange="lux=this.value">
-        <button onclick="runScan()">Run Scan</button>
-      </div>
-    `;
+  if(step==="scan"){
+    app.innerHTML=`
+    <div class="card">
+      <h3>Scan Environment</h3>
+      <input type="range" min="100" max="1000" value="${lux}" onchange="lux=this.value">
+      <button onclick="runScan()">Run Scan</button>
+    </div>`;
   }
 
-  if (step === "shop") {
-    app.innerHTML = `
-      <div class="card">
-        <h3>Recommended Plants</h3>
-        ${["Snake Plant","Pothos","Peace Lily"].map(p => `
-          <div style="margin-top:10px">
-            ${p}
-            <button onclick="addToCart('${p}')">Add</button>
-          </div>
-        `).join("")}
-      </div>
+  if(step==="shop"){
+    app.innerHTML=`
+    <div class="card">
+      <h3>Plants</h3>
+      ${["Snake Plant","Pothos","Peace Lily"].map(p=>`
+        <div>${p}
+        <button onclick="addToCart('${p}')">Add</button></div>
+      `).join("")}
+    </div>
 
-      <div class="card">
-        <h3>Cart (${cart.length})</h3>
-        <button onclick="checkout()">Checkout</button>
-      </div>
-    `;
+    <div class="card">
+      <h3>Cart (${cart.length})</h3>
+      <button onclick="checkout()">Checkout</button>
+    </div>`;
   }
 }
 
-function saveProfile() {
-  profile = {
-    name: document.getElementById("name").value,
-    phone: document.getElementById("phone").value,
-    email: document.getElementById("email").value
+function saveProfile(){
+  profile={
+    name:document.getElementById("name").value,
+    phone:document.getElementById("phone").value,
+    email:document.getElementById("email").value
   };
 
-  localStorage.setItem("profile", JSON.stringify(profile));
+  localStorage.setItem("profile",JSON.stringify(profile));
 
-  sync("User_Init", { userProfile: profile });
+  sync("User_Init",{userProfile:profile});
 
-  step = "scan";
+  step="scan";
   render();
 }
 
-function runScan() {
-  sync("Track_Event", {
-    event_type: "SCAN_COMPLETED",
-    payload: { lux }
+function runScan(){
+  sync("Track_Event",{
+    event_type:"SCAN_COMPLETED",
+    payload:{lux}
   });
 
-  step = "shop";
+  step="shop";
   render();
 }
 
-function addToCart(item) {
+function addToCart(item){
   cart.push(item);
 
-  sync("Track_Event", {
-    event_type: "ADD_TO_CART",
-    payload: { item }
+  sync("Track_Event",{
+    event_type:"ADD_TO_CART",
+    payload:{item}
   });
 
   render();
 }
 
-function checkout() {
-  sync("Procurement_Order", {
-    userProfile: profile,
-    items: cart,
-    totalValue: cart.length * 500
+function checkout(){
+  sync("Procurement_Order",{
+    userProfile:profile,
+    items:cart,
+    totalValue:cart.length*500
   });
 
-  alert("Order placed!");
-  cart = [];
-  step = "profile";
+  alert("Order placed");
+  cart=[];
+  step="profile";
   render();
 }
 
